@@ -1,6 +1,8 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -17,8 +19,6 @@ public class TeleopDrive extends CommandBase{
     private int translationAxis;
     private int rotationAxis;
 
-    private final Field2d m_field = new Field2d();
-
     private double translation;
     private double rotation;
 
@@ -27,12 +27,12 @@ public class TeleopDrive extends CommandBase{
 
 
     public TeleopDrive(Drive d_Drive, Joystick controller, int translationAxis, int rotationAxis){
+        addRequirements(d_Drive);
         this.d_Drive = d_Drive;
         this.controller = controller;
         this.translationAxis = translationAxis;
         this.rotationAxis = rotationAxis;
 
-        SmartDashboard.putData("Field", m_field);
     }
 
     @Override
@@ -40,10 +40,11 @@ public class TeleopDrive extends CommandBase{
         double yAxis = -controller.getRawAxis(translationAxis);
         double rAxis = -controller.getRawAxis(rotationAxis);
 
-        translation = m_speedLimiter.calculate(yAxis) * Constants.Drive.maxSpeed;
-        rotation = m_rotLimiter.calculate(rAxis) * Constants.Drive.maxAngularVelocity;
+        translation = m_speedLimiter.calculate(yAxis) * Constants.DriveConstants.maxSpeed;
+        rotation = m_rotLimiter.calculate(rAxis) * Constants.DriveConstants.maxAngularVelocity;
 
         d_Drive.drive(translation, rotation);
+
     }
 
 
